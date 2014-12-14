@@ -1,3 +1,8 @@
 path:
   logs: /data/log
   data: /data/data
+# Need to allow browser to get kibana and elasticsearch
+http.cors.enabled: true
+# regex should be more restrictive than this
+http.cors.allow-origin: "*"
+  
