@@ -63,11 +63,6 @@ path:
   logs: /data/log
   data: /data/data
 
-Start a container by mounting data directory and specifying the custom configuration file, specifying the hostname 'elasticsearch' so that logstash can find it::
-
-docker run -d -p 9200:9200 -p 9300:9300 -v <data-dir>:/data dockerfile/elasticsearch /elasticsearch/bin/elasticsearch -Des.config=/data/elasticsearch.yml
-After few seconds, open http://<host>:9200 to see the result.
-
 Mount my local elasticsearch data dir and run giving it a hostname that LogStash can link to::
 
   docker run --hostname=elasticsearch --name=elasticsearch -d -p 9200:9200 -p 9300:9300  -v `pwd`/elasticsearch/data:/data dockerfile/elasticsearch /elasticsearch/bin/elasticsearch -Des.config=/data/elasticsearch.yml
@@ -127,6 +122,49 @@ And a search on your still-empty corpus::
 
 After we link LogStash to ElasticSearch we can find hits when we search.
 
+For Kibana in the browser to access ElasticSearch, we have to enable CORS::
+
+  path:
+    logs: /data/log
+    data: /data/data
+  http.cors.enabled: true
+  http.cors.allow-origin: "*"
+
+DANGER: the above is way too permissive, the allow-origin should be a
+regex of the host serving Kibana. But what is it in the Docker
+context?
+
 Kibana
 ======
+
+Kibana is just HTML, CSS, and JavaScript so we'll just run an Apache
+container and mount the code from a local dir.
+
+https://download.elasticsearch.org/kibana/kibana/kibana-3.1.2.tar.gz
+
+Edit the config.js to point the elasticsearch parameter at our
+'elasticsearch' hostname; docs say it wants an FQDN but we don't have
+that. Replace::n
+
+  elasticsearch: "http://"+window.location.hostname+":9200",
+
+with::
+
+  elasticsearch: "http://elasticsearch:9200",
+
+We might later want an image of Kibana built on an Apache image::
+
+  FROM httpd:2.4
+  COPY ./kibana/ /usr/local/apache2/htdocs/
+
+
+Apache
+======
+
+There's an official Apache server image `httpd`.  We'll run it
+mounting the local Kibana directory onto the Apache document
+directory::
+
+  docker run --hostname=apache --name=apache --publish=8888:80 --link=elasticsearch:elasticsearch -v `pwd`/kibana-3.1.2:/usr/local/apache2/htdocs/ httpd:2.4
+
 
