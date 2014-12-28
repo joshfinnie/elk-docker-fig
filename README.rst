@@ -2,6 +2,12 @@
  Create ELK stack based on The Docker Book's ElasticSearch example
 ===================================================================
 
+On OS X, start up Docker and set the environment variables so the
+boot2docker VM is reachable::
+
+  boot2docker up
+  $(boot2docker shellinit)
+
 LogStash
 ========
 
@@ -174,7 +180,11 @@ There's an official Apache server image `httpd`.  We'll run it
 mounting the local Kibana directory onto the Apache document
 directory::
 
-  docker run --hostname=apache --name=apache --publish=8888:80 --link=elasticsearch:elasticsearch -v `pwd`/kibana-3.1.2:/usr/local/apache2/htdocs/ httpd:2.4
+  docker run --hostname=apache --name=apache --publish=8888:80 -v `pwd`/kibana-3.1.2:/usr/local/apache2/htdocs/ httpd:2.4
+
+We don't have/need 'links' here because the host's browser trying to
+do the resolution in Kibana3, exposing it to the container doesn't
+help. In Kibana4 it should.
 
 Test::
 
@@ -198,7 +208,7 @@ Then LogStash::
 
 And Apache, mounting Kibana source as a data volume::
 
-  docker run --hostname=apache --name=apache --publish=8888:80 --link=elasticsearch:elasticsearch -v `pwd`/kibana-3.1.2:/usr/local/apache2/htdocs/ httpd:2.4
+  docker run --name=apache --publish=8888:80 -v `pwd`/kibana-3.1.2:/usr/local/apache2/htdocs/ httpd:2.4
 
 Test Kibana::
 
@@ -213,6 +223,26 @@ it can find ElasticSearch::
 This time we get a page, so go to the sample newbie dashboard::
 
   http://192.168.59.103:8888/index.html#/dashboard/file/guided.json
+
+
+Fig Orchestration
+=================
+
+We should be able to use Fig to orchestrate the various pieces above
+from a single YAML file.
+
+Install `fig`::
+
+  curl -L https://github.com/docker/fig/releases/download/1.0.1/fig-`uname -s`-`uname -m` > /usr/local/bin/fig; chmod +x /usr/local/bin/fig
+
+(I could not get this to work by creating a virtualenv (python 2 or 3)
+and then installing fig in it; the standalone command above worked
+fine.)
+
+Edit the `fig.yml` file to define the containers and host connections::
+
+  [example here]
+
 
 TODO
 ====

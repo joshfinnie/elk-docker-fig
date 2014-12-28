@@ -1,0 +1,27 @@
+# how to spec 'name' and 'hostname'? implicit in the spec's top-level name?
+# how to spec daemonization, or it it implicit since fig can't retain tty?
+
+elasticsearch:
+  image: dockerfile/elasticsearch
+  command: /elasticsearch/bin/elasticsearch -D es.config=/data/elasticsearch.yml
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+  volumes:
+    - ./elasticsearch/data:/data
+
+logstash:
+  image: shentonfreude/logstash
+  volumes:
+    - ./hostlogs:/hostlogs
+  links:
+    - elasticsearch
+
+# No 'links' because the host's browser trying to do the resolution in Kibana3
+
+apache:
+  image: httpd:2.4
+  ports:
+    - 8888:80
+  volumes:
+    - ./kibana-3.1.2:/usr/local/apache2/htdocs
