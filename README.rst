@@ -148,7 +148,15 @@ that. Replace::
 
 with::
 
-  elasticsearch: "http://elasticsearch:9200",
+  elasticsearch: "http://192.168.59.105:9200",
+
+We can NOT use the Docker-provided DNS name we gave it::
+
+  elasticsearch: "http://elasticsearch:9200",     // WRONG!
+
+because the browser will try to resolve that name in JavaScript and
+won't find it. Until we find a better way, we have to hard-code the IP
+address, and this will change each time Docker restarts.
 
 While we might later want an image of Kibana built on an Apache image::
 
