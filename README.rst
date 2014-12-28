@@ -214,3 +214,18 @@ This time we get a page, so go to the sample newbie dashboard::
 
   http://192.168.59.103:8888/index.html#/dashboard/file/guided.json
 
+TODO
+====
+
+* Redis: Put Redis in front of LogStash. Use a separate container so
+  we could fan out LogStash processes.
+
+* LogStash Filters: for syslog, apache, etc; parse logs to JSON for ElasticSearch
+
+* Use logstash-forwarder on servers sending logs (but Redis can't accept encrypted streams?)
+
+* Kibana: we've got lame visualization and parsing
+
+* Kibana-4b3: has its own server (Java required) so can avoid DNS
+  hostname problem in JS; use a container for this, but negates need
+  for Apache.
