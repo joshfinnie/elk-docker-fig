@@ -241,8 +241,37 @@ fine.)
 
 Edit the `fig.yml` file to define the containers and host connections::
 
-  [example here]
+  elasticsearch:
+    image: dockerfile/elasticsearch
+    command: /elasticsearch/bin/elasticsearch -D es.config=/data/elasticsearch.yml
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./elasticsearch/data:/data
 
+  logstash:
+    image: shentonfreude/logstash
+    volumes:
+      - ./hostlogs:/hostlogs
+    links:
+      - elasticsearch
+
+  apache:
+    image: httpd:2.4
+    ports:
+      - 8888:80
+    volumes:
+      - ./kibana-3.1.2:/usr/local/apache2/htdocs
+
+My apache image must be stupid because it doesn't release the
+terminal, so a ^C stops the entire fig stack. 
+
+With apache running, visit the app at 
+http://192.168.59.103:8888/index.html#/dashboard/file/default.json
+
+This is pretty nice and seems easier and more transparent than
+Vagrant's Docker providers.
 
 TODO
 ====
