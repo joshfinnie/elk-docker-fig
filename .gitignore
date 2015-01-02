@@ -1,5 +1,2 @@
-
-/elasticsearch/data/log/elasticsearch.log
-/elasticsearch/data/log/elasticsearch.log.2014-12-14
-/elasticsearch/data/log/elasticsearch_index_indexing_slowlog.log
-/elasticsearch/data/log/elasticsearch_index_search_slowlog.log
+elasticsearch-data/data/
+elasticsearch-data/data/

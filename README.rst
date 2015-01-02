@@ -294,13 +294,61 @@ and test that I can get the connection via the /etc/hosts entry::
   docker exec -i -t elkfrombook_kibana_1  /bin/bash
   curl http://elasticsearch:9200/
 
+The above works but I keep seeing Kibana saying it's finding ElasticSearch-1.1.1 which is too low::
+
+  Kibana: This version of Kibana requires Elasticsearch 1.4.0 or higher on all nodes. I found the following incompatible nodes in your cluster: 
+  Elasticsearch 1.1.1 @ inet[/172.17.0.17:9300] (172.17.0.17)
+
+But that host, 0.17, is NOT what's in the /etc/hosts file edited by fig::
+
+  172.17.0.15	elk_es_1
+  172.17.0.15	es
+  172.17.0.15	es_1
+
+If we curlthat from-where .17 address, we connect::
+
+  curl http://172.17.0.17:9300/
+
+and the *logstash* logs show a stream error::
+
+  logstash_1 | log4j, [2015-01-02T22:15:27.396]  WARN: org.elasticsearch.transport.netty:
+               [logstash-0d41a1e702d3-1-4002]
+               exception caught on transport layer
+               [[id: 0x46fa96a9, /172.17.0.19:47681 => /172.17.0.17:9300]], closing connection
+  logstash_1 | java.io.StreamCorruptedException: invalid internal transport message format
+
+why is logstash involved at all?
+
+The machine's own address is .19::
+
+  ip route
+  default via 172.17.42.1 dev eth0 
+  172.17.0.0/16 dev eth0  proto kernel  scope link  src 172.17.0.19 
+
+I try to specify the URL with the Fig name elasticsearch_1 (or
+elk_elasticsearch_1) but it then complains of an invalud URL --
+underscores are not allowed in DNS names and Java may enforce this::
+
+  "name":"URI::InvalidURIError",
+  "message":"the scheme http does not accept registry part: elasticsearch_1:9200 (or bad hostname?)
+
 The config file is not getting my override::
 
   grep elasticsearch: /var/www/html/kibana-4.0.0-beta3/config/kibana.yml
   elasticsearch: "http://localhost:9200"
 
+If I comment out the fig.yml 'logstash' stanza, Kibana comes up just
+fine! WTF? how is logstash doing this? is it running the older
+ElasticSearch and it's being found by some service discovery or
+clustering?
+
+
 TODO
 ====
+
+* INPROGRESS:  Kibana-4b3: has its own server (Java required) so can avoid DNS
+  hostname problem in JS; use a container for this, but negates need
+  for Apache.
 
 * Redis: Put Redis in front of LogStash. Use a separate container so
   we could fan out LogStash processes.
@@ -311,6 +359,4 @@ TODO
 
 * Kibana: we've got lame visualization and parsing
 
-* Kibana-4b3: has its own server (Java required) so can avoid DNS
-  hostname problem in JS; use a container for this, but negates need
-  for Apache.
+* How to use fig to build the images

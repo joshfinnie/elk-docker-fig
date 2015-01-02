@@ -1,34 +1,30 @@
-# how to spec 'name' and 'hostname'? implicit in the spec's top-level name?
-# how to spec daemonization, or it it implicit since fig can't retain tty?
+# links: fig-servicename:localcontaineralias
 
 elasticsearch:
-  image: dockerfile/elasticsearch
-  command: /elasticsearch/bin/elasticsearch -D es.config=/data/elasticsearch.yml
+  #image: shentonfreude/elasticsearch:1.4.2
+  build: elasticsearch
+  volumes:
+    - ./elasticsearch-data:/data
   ports:
     - "9200:9200"
     - "9300:9300"
-  volumes:
-    - ./elasticsearch/data:/data
-
-logstash:
-  image: shentonfreude/logstash
-  volumes:
-    - ./hostlogs:/hostlogs
-  links:
-    - elasticsearch
-
+  
 kibana:
-  image: shentonfreude/kibana:4b3
+  build: kibana
+  #image: shentonfreude/kibana:4b3
   ports:
     - "5601:5601"
+    - "5602:5602"
   links:
-    - elasticsearch
+    - elasticsearch:elasticsearch
 
-# No 'links' because the host's browser trying to do the resolution in Kibana3
-
-apache:
-  image: httpd:2.4
-  ports:
-    - "8888:80"
-  volumes:
-    - ./kibana-3.1.2:/usr/local/apache2/htdocs
+# If this is run, then Kibana seems to find it and complains about the
+# old 1.1.1 version of ElasticSearch
+#
+# logstash:
+#   #image: shentonfreude/logstash:1.4
+#   build: logstash
+#   volumes:
+#     - ./hostlogs:/hostlogs
+#   links:
+#     - es:elasticsearch

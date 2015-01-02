@@ -3,14 +3,18 @@
 #   touch $@
 # to indicate success, and remove them with 'clean' targets
 
-build: .logstash-image .kibana-image
+build: .elasticsearch-image .logstash-image .kibana-image
 
-.logstash-image: logstash/Dockerfile logstash/logstash.conf
-	docker build -t shentonfreude/logstash logstash
+.elasticsearch-image: elasticsearch/Dockerfile elasticsearch/config/elasticsearch.yml
+	docker build --rm --no-cache -t shentonfreude/elasticsearch:1.4.2 elasticsearch
 	touch $@
 
-.kibana-image: kibana4b3/Dockerfile kibana4b3/kibana.yml
-	docker build -t shentonfreude/kibana:4b3 kibana4b3
+.logstash-image: logstash/Dockerfile logstash/logstash.conf
+	docker build --rm --no-cache -t shentonfreude/logstash:1.4 logstash
+	touch $@
+
+.kibana-image: kibana/Dockerfile kibana/kibana.yml
+	docker build --rm --no-cache -t shentonfreude/kibana:4b3 kibana
 	touch $@
 
 # .httpd-image:
@@ -19,13 +23,21 @@ build: .logstash-image .kibana-image
 # build-elasticsearch-image:
 # 	docker pull dockerfile/elasticsearch
 
-clean: clean-logstash-image clean-kibana-image
+clean: clean-elasticsearch-image clean-logstash-image clean-kibana-image
+
+clean-elasticsearch-image: .logstash-image
+	docker rmi shentonfreude/elasticsearch:1.4.2
+	rm $<
 
 clean-logstash-image: .logstash-image
 	docker rmi shentonfreude/logstash:latest
 	rm $<
 
-
 clean-kibana-image: .kibana-image
 	docker rmi shentonfreude/kibana:4b3
 	rm $<
+
+# Cleanup crap
+
+remove-dangling:
+	docker images -q --filter dangling=true | xargs docker rmi
