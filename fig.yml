@@ -18,9 +18,19 @@ kibana:
   links:
     - elasticsearch:elasticsearch
 
-# If this is run, then Kibana seems to find it and complains about the
-# old 1.1.1 version of ElasticSearch
-#
+# If either of these LogStashes are run, Kibana4 seems to find a 1.1.1
+# version which is too old for Kibana4. I suspect LogStash causes an
+# ElasticSearch to run which joins the conluster containing 1.4.2.
+
+# logstash-1.4.2 built on certified OpenJDK JRE box, clean
+logstash142:
+  build: logstash142
+  volumes:
+    - ./logstash-logs:/logs
+  links:
+    - elasticsearch:elasticsearch
+
+# # Built on Ubuntu with apt-get and such
 # logstash:
 #   #image: shentonfreude/logstash:1.4
 #   build: logstash
