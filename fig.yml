@@ -17,11 +17,18 @@ logstash:
   links:
     - elasticsearch
 
+kibana:
+  image: shentonfreude/kibana:4b3
+  ports:
+    - "5601:5601"
+  links:
+    - elasticsearch
+
 # No 'links' because the host's browser trying to do the resolution in Kibana3
 
 apache:
   image: httpd:2.4
   ports:
-    - 8888:80
+    - "8888:80"
   volumes:
     - ./kibana-3.1.2:/usr/local/apache2/htdocs

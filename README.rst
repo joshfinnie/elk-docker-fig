@@ -273,6 +273,32 @@ http://192.168.59.103:8888/index.html#/dashboard/file/default.json
 This is pretty nice and seems easier and more transparent than
 Vagrant's Docker providers.
 
+Kibana-4b3
+==========
+
+Kibana-4 uses its own server so it should be able to resolve the
+Docker hostnames and find ElasticSearch, which Kibana-3's
+browser-native host resolution cannot do. It requires Java so build an
+image::
+
+  docker build -t shentonfreude/kibana:4b3 kibana4b3
+
+Then run it, exposing the port::
+
+  docker run -p 5601:5601 shentonfreude/kibana
+
+Gives long Java stack trace showing it couldn't connect, but doesn't
+give the URL it's trying to connect to. :-( I can shell into the box
+and test that I can get the connection via the /etc/hosts entry::
+
+  docker exec -i -t elkfrombook_kibana_1  /bin/bash
+  curl http://elasticsearch:9200/
+
+The config file is not getting my override::
+
+  grep elasticsearch: /var/www/html/kibana-4.0.0-beta3/config/kibana.yml
+  elasticsearch: "http://localhost:9200"
+
 TODO
 ====
 
