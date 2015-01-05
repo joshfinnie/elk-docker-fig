@@ -342,6 +342,14 @@ fine! WTF? how is logstash doing this? is it running the older
 ElasticSearch and it's being found by some service discovery or
 clustering?
 
+See this thread discussing how LogStash is being by ElasticSearch as cluster member.
+
+https://github.com/elasticsearch/kibana/issues/1629
+
+You can see it after fig launches like:
+
+  docker exec elk_elasticsearch_1 curl -XGET http://localhost:9200/_nodes
+
 
 TODO
 ====
