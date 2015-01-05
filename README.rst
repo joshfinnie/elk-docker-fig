@@ -354,10 +354,6 @@ You can see it after fig launches like:
 TODO
 ====
 
-* INPROGRESS:  Kibana-4b3: has its own server (Java required) so can avoid DNS
-  hostname problem in JS; use a container for this, but negates need
-  for Apache.
-
 * Redis: Put Redis in front of LogStash. Use a separate container so
   we could fan out LogStash processes.
 
@@ -367,4 +363,15 @@ TODO
 
 * Kibana: we've got lame visualization and parsing
 
+* I've created a new empty elasticserach-data volume but not seeing the writes from the container in it. 
+
+DONE
+====
+
 * How to use fig to build the images
+
+* Kibana-4b3: has its own server (Java required) so can avoid DNS
+  hostname problem in JS; use a container for this, but negates need
+  for Apache.
+
+

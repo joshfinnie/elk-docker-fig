@@ -1,18 +1,12 @@
-FROM ubuntu:14.10
+FROM java:openjdk-8-jre
 MAINTAINER Chris Shenton <chris@shenton.org>
-ENV REFRESHED_AT 2014-12-13
+ENV REFRESHED_AT 2014-01-05
 
-RUN apt-get -yqq update
-RUN apt-get -yqq install wget
-RUN wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
-# 1.4.2 is presently current
-RUN echo 'deb http://packages.elasticsearch.org/logstash/1.4/debian stable main' > /etc/apt/sources.list.d/logstash.list
-RUN apt-get -yqq update
-RUN apt-get -yqq install logstash
+WORKDIR /logstash
+RUN wget --quiet -O - https://download.elasticsearch.org/logstash/logstash/logstash-1.4.2.tar.gz | tar zxf - --strip-components 1
 
-ADD logstash.conf /etc/
+ADD ./logstash.conf /logstash/logstash.conf
 
-WORKDIR /opt/logstash
 ENTRYPOINT [ "bin/logstash" ]
-CMD [ "--config=/etc/logstash.conf" ]
+CMD [ "--config=/logstash/logstash.conf" ]
 

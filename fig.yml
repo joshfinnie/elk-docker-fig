@@ -1,4 +1,4 @@
-# links: fig-servicename:localcontaineralias
+# links: fig_servicename:local_container_path
 
 elasticsearch:
   #image: shentonfreude/elasticsearch:1.4.2
@@ -10,31 +10,18 @@ elasticsearch:
     - "9300:9300"
   
 kibana:
-  build: kibana
   #image: shentonfreude/kibana:4b3
+  build: kibana
   ports:
     - "5601:5601"
     - "5602:5602"
   links:
     - elasticsearch:elasticsearch
 
-# If either of these LogStashes are run, Kibana4 seems to find a 1.1.1
-# version which is too old for Kibana4. I suspect LogStash causes an
-# ElasticSearch to run which joins the conluster containing 1.4.2.
-
-# logstash-1.4.2 built on certified OpenJDK JRE box, clean
-logstash142:
-  build: logstash142
+logstash:
+  build: logstash
   volumes:
     - ./logstash-logs:/logs
   links:
     - elasticsearch:elasticsearch
 
-# # Built on Ubuntu with apt-get and such
-# logstash:
-#   #image: shentonfreude/logstash:1.4
-#   build: logstash
-#   volumes:
-#     - ./hostlogs:/hostlogs
-#   links:
-#     - es:elasticsearch
