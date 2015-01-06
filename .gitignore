@@ -1,1 +1,3 @@
 elasticsearch-data/data/
+/elasticsearch-data/
+logstash-logs/*.log

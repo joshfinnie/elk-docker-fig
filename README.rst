@@ -363,8 +363,6 @@ TODO
 
 * Kibana: we've got lame visualization and parsing
 
-* I've created a new empty elasticserach-data volume but not seeing the writes from the container in it. 
-
 DONE
 ====
 
@@ -373,5 +371,9 @@ DONE
 * Kibana-4b3: has its own server (Java required) so can avoid DNS
   hostname problem in JS; use a container for this, but negates need
   for Apache.
+
+* I've created a new empty elasticserach-data volume but not seeing
+  the writes from the container in it. FIX: fig rm the containers and
+  rebuild; they may have had a link to the old volume somehow.
 
 

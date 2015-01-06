@@ -1,13 +1,12 @@
 FROM java:openjdk-8-jre
 MAINTAINER Chris Shenton <chris@shenton.org>
-ENV REFRESHED_AT 2015-01-02
 
 ENV ES_PKG_NAME elasticsearch-1.4.2
 
 WORKDIR /elasticsearch
-RUN wget -O - https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.tar.gz | tar zxf - --strip-components 1
+RUN wget --quiet -O - https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.tar.gz | tar zxf - --strip-components 1
 
-ADD config/elasticsearch.yml /elasticsearch/config/elasticsearch.yml
+ADD ./elasticsearch.yml /elasticsearch/config/elasticsearch.yml
 
 VOLUME ["/data"]
 WORKDIR /data
